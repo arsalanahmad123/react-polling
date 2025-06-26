@@ -339,7 +339,7 @@ export const PollDetails = () => {
                                     />
                                 )}
 
-                            {showResults || isOwner && (
+                            {(showResults || isOwner) && (
                                 <PollResults
                                     options={poll.options}
                                     selectedOptions={selectedOptions}
