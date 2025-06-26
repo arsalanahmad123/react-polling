@@ -36,7 +36,7 @@ export const PollDetails = () => {
      
      
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [votes, setVotes] = useState<Vote[]>([]);
+    const [_votes, setVotes] = useState<Vote[]>([]);
     const [voteResults, setVoteResults] = useState<VoteResults>({});
     const [selectedOptions, setSelectedOptions] = useState<number[]>([]);
     const [hasVoted, setHasVoted] = useState(false);
