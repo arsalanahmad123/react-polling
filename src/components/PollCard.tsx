@@ -1,8 +1,9 @@
 import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card';
 import { Link } from 'react-router-dom';
 import { isPollActive } from '@/lib/helper-functions';
+import type { Poll } from '@/types';
 
-export default function PollCard({ poll }) {
+export default function PollCard({ poll }: { poll: Poll}) {
     const active = isPollActive(poll);
 
     return (
