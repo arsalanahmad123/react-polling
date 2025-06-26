@@ -30,10 +30,9 @@ export interface VoteResults {
 
 export interface ChartDataPoint {
     name: string;
+    fullName: string;
     value: number;
     percentage: number;
     color: string;
     isSelected: boolean;
-    fullName: string
 }
-  

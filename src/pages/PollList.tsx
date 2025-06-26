@@ -90,6 +90,8 @@ export const PollList = () => {
         };
     }, [search]);
 
+    console.log(polls)
+
     useEffect(() => {
         const channel = supabase
             .channel('realtime-polls')

@@ -20,7 +20,7 @@ import { BarChart3, PieChartIcon, TrendingUp } from 'lucide-react';
 import type { ChartDataPoint } from '@/types';
 
 interface LiveChartsProps {
-    options: string[];
+    options: (string | { text: string })[];
     voteResults: { [key: number]: number };
     selectedOptions: number[];
     totalVotes: number;
@@ -46,19 +46,26 @@ export default function LiveCharts({
     totalVotes,
 }: LiveChartsProps) {
     const chartData: ChartDataPoint[] = options.map((option, index) => {
+        const fullName =
+            typeof option === 'string'
+                ? option
+                : option.text ?? JSON.stringify(option);
+        const displayName =
+            fullName.length > 20 ? `${fullName.substring(0, 20)}...` : fullName;
+
         const votes = voteResults[index] || 0;
         const percentage = totalVotes > 0 ? (votes / totalVotes) * 100 : 0;
 
         return {
-            name: option.length > 20 ? `${option.substring(0, 20)}...` : option,
-            fullName: option,
+            name: displayName, // 👈 now always string
+            fullName,
             value: votes,
             percentage: Math.round(percentage * 10) / 10,
             color: COLORS[index % COLORS.length],
             isSelected: selectedOptions.includes(index),
         };
     });
-
+    
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const CustomTooltip = ({ active, payload }: any) => {
         if (active && payload && payload.length) {

@@ -35,7 +35,8 @@ export const PollDetails = () => {
     const [poll, setPoll] = useState<Poll | null>(null);
      
      
-    const [, setVotes] = useState<Vote[]>([]);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [votes, setVotes] = useState<Vote[]>([]);
     const [voteResults, setVoteResults] = useState<VoteResults>({});
     const [selectedOptions, setSelectedOptions] = useState<number[]>([]);
     const [hasVoted, setHasVoted] = useState(false);
@@ -134,37 +135,8 @@ export const PollDetails = () => {
     useEffect(() => {
         if (!id) return;
 
-
         const channel = supabase
             .channel(`poll-${id}`)
-            .on(
-                'postgres_changes',
-                {
-                    event: '*',
-                    schema: 'public',
-                    table: 'votes',
-                    filter: `poll_id=eq.${id}`,
-                },
-                (payload) => {
-                    const newVote = payload.new as Vote & { user_id: string };
-
-                    setVotes((prevVotes) => {
-                        const updated = prevVotes.filter(
-                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                            (v: any) => {
-                                if (user) {
-                                    return v.user_id !== newVote.user_id;
-                                } else {
-                                    return v.ip_hash !== newVote.ip_hash;
-                                }
-                            }
-                        );
-                        updated.push(newVote);
-                        calculateResults(updated);
-                        return updated;
-                    });
-                }
-            )
             .on(
                 'postgres_changes',
                 {
@@ -185,32 +157,6 @@ export const PollDetails = () => {
                     }
                 }
             )
-            .on(
-                'postgres_changes',
-                {
-                    event: '*',
-                    schema: 'public',
-                    table: 'votes',
-                    filter: `poll_id=eq.${id}`,
-                },
-                (payload) => {
-                    const deletedVote = payload.old as Vote;
-
-                    setVotes((prevVotes) => {
-                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                        const updated = prevVotes.filter((v: any) => {
-                            if (user) {
-                                return v.user_id !== deletedVote.user_id;
-                            } else {
-                                return v.ip_hash !== deletedVote.ip_hash;
-                            }
-                        });
-
-                        calculateResults(updated);
-                        return updated;
-                    });
-                }
-            )
             .on('presence', { event: 'sync' }, () => {
                 const state = channel.presenceState();
                 setActiveViewers(Object.keys(state).length);
@@ -222,7 +168,7 @@ export const PollDetails = () => {
         return () => {
             supabase.removeChannel(channel);
         };
-    }, [id, user]);
+    }, [id, user]);    
 
     const handleOptionSelect = (index: number) => {
         if (isPollEnded) return;
